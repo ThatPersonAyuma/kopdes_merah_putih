@@ -1,0 +1,90 @@
+{
+    "directed": true,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "label": "START: get_user()",
+            "id": "1:START: get_user()"
+        },
+        {
+            "label": "ASSIGN: query = f'SELECT * FROM users where \"id\"={id};'",
+            "id": "2:ASSIGN: query = f'SELECT * FROM users where \"id\"={id};'"
+        },
+        {
+            "label": "TRY",
+            "id": "3:TRY"
+        },
+        {
+            "label": "WITH: conn.cursor() as cur",
+            "id": "4:WITH: conn.cursor() as cur"
+        },
+        {
+            "label": "METHOD: cur.execute(query)",
+            "id": "5:METHOD: cur.execute(query)"
+        },
+        {
+            "label": "RETURN: cur.fetchall()[0]",
+            "id": "6:RETURN: cur.fetchall()[0]"
+        },
+        {
+            "label": "EXCEPT Exception as e",
+            "id": "7:EXCEPT Exception as e"
+        },
+        {
+            "label": "RETURN: HTTPException(status_code=500, detail=f'User Not Found: {e}\u2026",
+            "id": "8:RETURN: HTTPException(status_code=500, detail=f'User Not Found: {e}\u2026"
+        },
+        {
+            "label": "END: get_user()",
+            "id": "9:END: get_user()"
+        }
+    ],
+    "edges": [
+        {
+            "label": "",
+            "source": "1:START: get_user()",
+            "target": "2:ASSIGN: query = f'SELECT * FROM users where \"id\"={id};'"
+        },
+        {
+            "label": "",
+            "source": "2:ASSIGN: query = f'SELECT * FROM users where \"id\"={id};'",
+            "target": "3:TRY"
+        },
+        {
+            "label": "",
+            "source": "3:TRY",
+            "target": "4:WITH: conn.cursor() as cur"
+        },
+        {
+            "label": "exception",
+            "source": "3:TRY",
+            "target": "7:EXCEPT Exception as e"
+        },
+        {
+            "label": "",
+            "source": "4:WITH: conn.cursor() as cur",
+            "target": "5:METHOD: cur.execute(query)"
+        },
+        {
+            "label": "",
+            "source": "5:METHOD: cur.execute(query)",
+            "target": "6:RETURN: cur.fetchall()[0]"
+        },
+        {
+            "label": "",
+            "source": "6:RETURN: cur.fetchall()[0]",
+            "target": "9:END: get_user()"
+        },
+        {
+            "label": "",
+            "source": "7:EXCEPT Exception as e",
+            "target": "8:RETURN: HTTPException(status_code=500, detail=f'User Not Found: {e}\u2026"
+        },
+        {
+            "label": "",
+            "source": "8:RETURN: HTTPException(status_code=500, detail=f'User Not Found: {e}\u2026",
+            "target": "9:END: get_user()"
+        }
+    ]
+}

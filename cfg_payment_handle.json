@@ -1,0 +1,476 @@
+{
+    "directed": true,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "label": "START: payment_handle()",
+            "id": "1:START: payment_handle()"
+        },
+        {
+            "label": "ASSIGN: user_query = SELECT id, is_member, balance FROM users WHERE id=%s;",
+            "id": "2:ASSIGN: user_query = SELECT id, is_member, balance FROM users WHERE id=%s;"
+        },
+        {
+            "label": "ASSIGN: cart_query = SELECT c.id, c.product_id, p.price, c.quantity, CASE WHEN c\u2026",
+            "id": "3:ASSIGN: cart_query = SELECT c.id, c.product_id, p.price, c.quantity, CASE WHEN c\u2026"
+        },
+        {
+            "label": "ASSIGN: vouchers_query = SELECT v.id, v.effect, v.amount FROM vouchers AS v WHERE v.\u2026",
+            "id": "4:ASSIGN: vouchers_query = SELECT v.id, v.effect, v.amount FROM vouchers AS v WHERE v.\u2026"
+        },
+        {
+            "label": "ASSIGN: user_change_balance_query = UPDATE users SET balance = %s WHERE id = %s",
+            "id": "5:ASSIGN: user_change_balance_query = UPDATE users SET balance = %s WHERE id = %s"
+        },
+        {
+            "label": "ASSIGN: cart_paid = UPDATE carts SET is_paid = true WHERE id = ANY(%s)",
+            "id": "6:ASSIGN: cart_paid = UPDATE carts SET is_paid = true WHERE id = ANY(%s)"
+        },
+        {
+            "label": "ASSIGN: used_vouchers_insert = INSERT INTO usedVouchers (user_id, voucher_id) VALUES (%s, \u2026",
+            "id": "7:ASSIGN: used_vouchers_insert = INSERT INTO usedVouchers (user_id, voucher_id) VALUES (%s, \u2026"
+        },
+        {
+            "label": "ASSIGN: update_product_stock_query = UPDATE products SET available_amount = available_amount - %\u2026",
+            "id": "8:ASSIGN: update_product_stock_query = UPDATE products SET available_amount = available_amount - %\u2026"
+        },
+        {
+            "label": "TRY",
+            "id": "9:TRY"
+        },
+        {
+            "label": "WITH: conn.cursor() as cur",
+            "id": "10:WITH: conn.cursor() as cur"
+        },
+        {
+            "label": "METHOD: cur.execute(user_query, (datas.userId,))",
+            "id": "11:METHOD: cur.execute(user_query, (datas.userId,))"
+        },
+        {
+            "label": "ASSIGN: user = cur.fetchone() [calls cur.fetchone()]",
+            "id": "12:ASSIGN: user = cur.fetchone() [calls cur.fetchone()]"
+        },
+        {
+            "label": "IF: user == None",
+            "id": "13:IF: user == None"
+        },
+        {
+            "label": "RETURN: {'Status': 'Failed', 'Message': 'User Tidak Ditemukan'}",
+            "id": "14:RETURN: {'Status': 'Failed', 'Message': 'User Tidak Ditemukan'}"
+        },
+        {
+            "label": "METHOD: cur.execute(cart_query, (datas.userId,))",
+            "id": "15:METHOD: cur.execute(cart_query, (datas.userId,))"
+        },
+        {
+            "label": "ASSIGN: cart_products = cur.fetchall() [calls cur.fetchall()]",
+            "id": "16:ASSIGN: cart_products = cur.fetchall() [calls cur.fetchall()]"
+        },
+        {
+            "label": "IF: len(cart_products) == 0",
+            "id": "17:IF: len(cart_products) == 0"
+        },
+        {
+            "label": "RETURN: {'Status': 'Failed', 'Message': 'Belum Ada Produk di Keranj\u2026",
+            "id": "18:RETURN: {'Status': 'Failed', 'Message': 'Belum Ada Produk di Keranj\u2026"
+        },
+        {
+            "label": "ASSIGN: total = 0",
+            "id": "19:ASSIGN: total = 0"
+        },
+        {
+            "label": "FOR product IN cart_products",
+            "id": "20:FOR product IN cart_products"
+        },
+        {
+            "label": "IF: product['is_exceed'] == 1",
+            "id": "21:IF: product['is_exceed'] == 1"
+        },
+        {
+            "label": "RETURN: {'Status': 'Failed', 'Message': 'Jumlah Produk yang Akan Di\u2026",
+            "id": "22:RETURN: {'Status': 'Failed', 'Message': 'Jumlah Produk yang Akan Di\u2026"
+        },
+        {
+            "label": "ASSIGN: total += product['price'] * product['quantity']",
+            "id": "23:ASSIGN: total += product['price'] * product['quantity']"
+        },
+        {
+            "label": "FOR DONE",
+            "id": "24:FOR DONE"
+        },
+        {
+            "label": "METHOD: cur.execute(vouchers_query, (datas.voucherNames, datas.userId))",
+            "id": "25:METHOD: cur.execute(vouchers_query, (datas.voucherNames, datas.userId))"
+        },
+        {
+            "label": "ASSIGN: vouchers = cur.fetchall() [calls cur.fetchall()]",
+            "id": "26:ASSIGN: vouchers = cur.fetchall() [calls cur.fetchall()]"
+        },
+        {
+            "label": "ASSIGN: cashback = 0",
+            "id": "27:ASSIGN: cashback = 0"
+        },
+        {
+            "label": "FOR voucher IN vouchers",
+            "id": "28:FOR voucher IN vouchers"
+        },
+        {
+            "label": "UNPACK: (total, cashback_amount) = handle_voucher(total_price=total, voucher_type=voucher['eff\u2026 [calls handle_voucher()]",
+            "id": "29:UNPACK: (total, cashback_amount) = handle_voucher(total_price=total, voucher_type=voucher['eff\u2026 [calls handle_voucher()]"
+        },
+        {
+            "label": "ASSIGN: cashback += cashback_amount",
+            "id": "30:ASSIGN: cashback += cashback_amount"
+        },
+        {
+            "label": "FOR DONE",
+            "id": "31:FOR DONE"
+        },
+        {
+            "label": "IF: user['is_member']",
+            "id": "32:IF: user['is_member']"
+        },
+        {
+            "label": "ASSIGN: total *= 1 - MEMBER_DISCOUNT",
+            "id": "33:ASSIGN: total *= 1 - MEMBER_DISCOUNT"
+        },
+        {
+            "label": "IF: total > user['balance']",
+            "id": "34:IF: total > user['balance']"
+        },
+        {
+            "label": "RETURN: {'Status': 'Failed', 'Message': 'Saldo Anda Tidak Mencukupi\u2026",
+            "id": "35:RETURN: {'Status': 'Failed', 'Message': 'Saldo Anda Tidak Mencukupi\u2026"
+        },
+        {
+            "label": "ASSIGN: user['balance'] -= total",
+            "id": "36:ASSIGN: user['balance'] -= total"
+        },
+        {
+            "label": "ASSIGN: user['balance'] += cashback",
+            "id": "37:ASSIGN: user['balance'] += cashback"
+        },
+        {
+            "label": "BATCH: cur.executemany(used_vouchers_insert, [(datas.userId, vouchers[i]['id']) for i in range(len(vouch\u2026)",
+            "id": "38:BATCH: cur.executemany(used_vouchers_insert, [(datas.userId, vouchers[i]['id']) for i in range(len(vouch\u2026)"
+        },
+        {
+            "label": "METHOD: cur.execute(user_change_balance_query, (user['balance'], user['id']))",
+            "id": "39:METHOD: cur.execute(user_change_balance_query, (user['balance'], user['id']))"
+        },
+        {
+            "label": "ASSIGN: cart_ids = [product['id'] for product in cart_products] [listcomp]",
+            "id": "40:ASSIGN: cart_ids = [product['id'] for product in cart_products] [listcomp]"
+        },
+        {
+            "label": "METHOD: cur.execute(cart_paid, (cart_ids,))",
+            "id": "41:METHOD: cur.execute(cart_paid, (cart_ids,))"
+        },
+        {
+            "label": "ASSIGN: product_id_subtract = [(product['quantity'], product['product_id']) for product i\u2026 [listcomp]",
+            "id": "42:ASSIGN: product_id_subtract = [(product['quantity'], product['product_id']) for product i\u2026 [listcomp]"
+        },
+        {
+            "label": "BATCH: cur.executemany(update_product_stock_query, product_id_subtract)",
+            "id": "43:BATCH: cur.executemany(update_product_stock_query, product_id_subtract)"
+        },
+        {
+            "label": "METHOD: conn.commit()",
+            "id": "44:METHOD: conn.commit()"
+        },
+        {
+            "label": "RETURN: {'Status': 'Success', 'Message': 'Keranjang Anda Berhasil D\u2026",
+            "id": "45:RETURN: {'Status': 'Success', 'Message': 'Keranjang Anda Berhasil D\u2026"
+        },
+        {
+            "label": "EXCEPT Exception as e",
+            "id": "46:EXCEPT Exception as e"
+        },
+        {
+            "label": "RAISE: HTTPException(status_code=500, detail=f'Gagal membayar: {st\u2026",
+            "id": "47:RAISE: HTTPException(status_code=500, detail=f'Gagal membayar: {st\u2026"
+        },
+        {
+            "label": "END: payment_handle()",
+            "id": "48:END: payment_handle()"
+        }
+    ],
+    "edges": [
+        {
+            "label": "",
+            "source": "1:START: payment_handle()",
+            "target": "2:ASSIGN: user_query = SELECT id, is_member, balance FROM users WHERE id=%s;"
+        },
+        {
+            "label": "",
+            "source": "2:ASSIGN: user_query = SELECT id, is_member, balance FROM users WHERE id=%s;",
+            "target": "3:ASSIGN: cart_query = SELECT c.id, c.product_id, p.price, c.quantity, CASE WHEN c\u2026"
+        },
+        {
+            "label": "",
+            "source": "3:ASSIGN: cart_query = SELECT c.id, c.product_id, p.price, c.quantity, CASE WHEN c\u2026",
+            "target": "4:ASSIGN: vouchers_query = SELECT v.id, v.effect, v.amount FROM vouchers AS v WHERE v.\u2026"
+        },
+        {
+            "label": "",
+            "source": "4:ASSIGN: vouchers_query = SELECT v.id, v.effect, v.amount FROM vouchers AS v WHERE v.\u2026",
+            "target": "5:ASSIGN: user_change_balance_query = UPDATE users SET balance = %s WHERE id = %s"
+        },
+        {
+            "label": "",
+            "source": "5:ASSIGN: user_change_balance_query = UPDATE users SET balance = %s WHERE id = %s",
+            "target": "6:ASSIGN: cart_paid = UPDATE carts SET is_paid = true WHERE id = ANY(%s)"
+        },
+        {
+            "label": "",
+            "source": "6:ASSIGN: cart_paid = UPDATE carts SET is_paid = true WHERE id = ANY(%s)",
+            "target": "7:ASSIGN: used_vouchers_insert = INSERT INTO usedVouchers (user_id, voucher_id) VALUES (%s, \u2026"
+        },
+        {
+            "label": "",
+            "source": "7:ASSIGN: used_vouchers_insert = INSERT INTO usedVouchers (user_id, voucher_id) VALUES (%s, \u2026",
+            "target": "8:ASSIGN: update_product_stock_query = UPDATE products SET available_amount = available_amount - %\u2026"
+        },
+        {
+            "label": "",
+            "source": "8:ASSIGN: update_product_stock_query = UPDATE products SET available_amount = available_amount - %\u2026",
+            "target": "9:TRY"
+        },
+        {
+            "label": "",
+            "source": "9:TRY",
+            "target": "10:WITH: conn.cursor() as cur"
+        },
+        {
+            "label": "exception",
+            "source": "9:TRY",
+            "target": "46:EXCEPT Exception as e"
+        },
+        {
+            "label": "",
+            "source": "10:WITH: conn.cursor() as cur",
+            "target": "11:METHOD: cur.execute(user_query, (datas.userId,))"
+        },
+        {
+            "label": "",
+            "source": "11:METHOD: cur.execute(user_query, (datas.userId,))",
+            "target": "12:ASSIGN: user = cur.fetchone() [calls cur.fetchone()]"
+        },
+        {
+            "label": "",
+            "source": "12:ASSIGN: user = cur.fetchone() [calls cur.fetchone()]",
+            "target": "13:IF: user == None"
+        },
+        {
+            "label": "True",
+            "source": "13:IF: user == None",
+            "target": "14:RETURN: {'Status': 'Failed', 'Message': 'User Tidak Ditemukan'}"
+        },
+        {
+            "label": "False",
+            "source": "13:IF: user == None",
+            "target": "15:METHOD: cur.execute(cart_query, (datas.userId,))"
+        },
+        {
+            "label": "",
+            "source": "14:RETURN: {'Status': 'Failed', 'Message': 'User Tidak Ditemukan'}",
+            "target": "48:END: payment_handle()"
+        },
+        {
+            "label": "",
+            "source": "15:METHOD: cur.execute(cart_query, (datas.userId,))",
+            "target": "16:ASSIGN: cart_products = cur.fetchall() [calls cur.fetchall()]"
+        },
+        {
+            "label": "",
+            "source": "16:ASSIGN: cart_products = cur.fetchall() [calls cur.fetchall()]",
+            "target": "17:IF: len(cart_products) == 0"
+        },
+        {
+            "label": "True",
+            "source": "17:IF: len(cart_products) == 0",
+            "target": "18:RETURN: {'Status': 'Failed', 'Message': 'Belum Ada Produk di Keranj\u2026"
+        },
+        {
+            "label": "False",
+            "source": "17:IF: len(cart_products) == 0",
+            "target": "19:ASSIGN: total = 0"
+        },
+        {
+            "label": "",
+            "source": "18:RETURN: {'Status': 'Failed', 'Message': 'Belum Ada Produk di Keranj\u2026",
+            "target": "48:END: payment_handle()"
+        },
+        {
+            "label": "",
+            "source": "19:ASSIGN: total = 0",
+            "target": "20:FOR product IN cart_products"
+        },
+        {
+            "label": "body",
+            "source": "20:FOR product IN cart_products",
+            "target": "21:IF: product['is_exceed'] == 1"
+        },
+        {
+            "label": "done",
+            "source": "20:FOR product IN cart_products",
+            "target": "24:FOR DONE"
+        },
+        {
+            "label": "True",
+            "source": "21:IF: product['is_exceed'] == 1",
+            "target": "22:RETURN: {'Status': 'Failed', 'Message': 'Jumlah Produk yang Akan Di\u2026"
+        },
+        {
+            "label": "False",
+            "source": "21:IF: product['is_exceed'] == 1",
+            "target": "23:ASSIGN: total += product['price'] * product['quantity']"
+        },
+        {
+            "label": "",
+            "source": "22:RETURN: {'Status': 'Failed', 'Message': 'Jumlah Produk yang Akan Di\u2026",
+            "target": "48:END: payment_handle()"
+        },
+        {
+            "label": "next iter",
+            "source": "23:ASSIGN: total += product['price'] * product['quantity']",
+            "target": "20:FOR product IN cart_products"
+        },
+        {
+            "label": "",
+            "source": "24:FOR DONE",
+            "target": "25:METHOD: cur.execute(vouchers_query, (datas.voucherNames, datas.userId))"
+        },
+        {
+            "label": "",
+            "source": "25:METHOD: cur.execute(vouchers_query, (datas.voucherNames, datas.userId))",
+            "target": "26:ASSIGN: vouchers = cur.fetchall() [calls cur.fetchall()]"
+        },
+        {
+            "label": "",
+            "source": "26:ASSIGN: vouchers = cur.fetchall() [calls cur.fetchall()]",
+            "target": "27:ASSIGN: cashback = 0"
+        },
+        {
+            "label": "",
+            "source": "27:ASSIGN: cashback = 0",
+            "target": "28:FOR voucher IN vouchers"
+        },
+        {
+            "label": "body",
+            "source": "28:FOR voucher IN vouchers",
+            "target": "29:UNPACK: (total, cashback_amount) = handle_voucher(total_price=total, voucher_type=voucher['eff\u2026 [calls handle_voucher()]"
+        },
+        {
+            "label": "done",
+            "source": "28:FOR voucher IN vouchers",
+            "target": "31:FOR DONE"
+        },
+        {
+            "label": "",
+            "source": "29:UNPACK: (total, cashback_amount) = handle_voucher(total_price=total, voucher_type=voucher['eff\u2026 [calls handle_voucher()]",
+            "target": "30:ASSIGN: cashback += cashback_amount"
+        },
+        {
+            "label": "next iter",
+            "source": "30:ASSIGN: cashback += cashback_amount",
+            "target": "28:FOR voucher IN vouchers"
+        },
+        {
+            "label": "",
+            "source": "31:FOR DONE",
+            "target": "32:IF: user['is_member']"
+        },
+        {
+            "label": "True",
+            "source": "32:IF: user['is_member']",
+            "target": "33:ASSIGN: total *= 1 - MEMBER_DISCOUNT"
+        },
+        {
+            "label": "False",
+            "source": "32:IF: user['is_member']",
+            "target": "34:IF: total > user['balance']"
+        },
+        {
+            "label": "",
+            "source": "33:ASSIGN: total *= 1 - MEMBER_DISCOUNT",
+            "target": "34:IF: total > user['balance']"
+        },
+        {
+            "label": "True",
+            "source": "34:IF: total > user['balance']",
+            "target": "35:RETURN: {'Status': 'Failed', 'Message': 'Saldo Anda Tidak Mencukupi\u2026"
+        },
+        {
+            "label": "False",
+            "source": "34:IF: total > user['balance']",
+            "target": "36:ASSIGN: user['balance'] -= total"
+        },
+        {
+            "label": "",
+            "source": "35:RETURN: {'Status': 'Failed', 'Message': 'Saldo Anda Tidak Mencukupi\u2026",
+            "target": "48:END: payment_handle()"
+        },
+        {
+            "label": "",
+            "source": "36:ASSIGN: user['balance'] -= total",
+            "target": "37:ASSIGN: user['balance'] += cashback"
+        },
+        {
+            "label": "",
+            "source": "37:ASSIGN: user['balance'] += cashback",
+            "target": "38:BATCH: cur.executemany(used_vouchers_insert, [(datas.userId, vouchers[i]['id']) for i in range(len(vouch\u2026)"
+        },
+        {
+            "label": "",
+            "source": "38:BATCH: cur.executemany(used_vouchers_insert, [(datas.userId, vouchers[i]['id']) for i in range(len(vouch\u2026)",
+            "target": "39:METHOD: cur.execute(user_change_balance_query, (user['balance'], user['id']))"
+        },
+        {
+            "label": "",
+            "source": "39:METHOD: cur.execute(user_change_balance_query, (user['balance'], user['id']))",
+            "target": "40:ASSIGN: cart_ids = [product['id'] for product in cart_products] [listcomp]"
+        },
+        {
+            "label": "",
+            "source": "40:ASSIGN: cart_ids = [product['id'] for product in cart_products] [listcomp]",
+            "target": "41:METHOD: cur.execute(cart_paid, (cart_ids,))"
+        },
+        {
+            "label": "",
+            "source": "41:METHOD: cur.execute(cart_paid, (cart_ids,))",
+            "target": "42:ASSIGN: product_id_subtract = [(product['quantity'], product['product_id']) for product i\u2026 [listcomp]"
+        },
+        {
+            "label": "",
+            "source": "42:ASSIGN: product_id_subtract = [(product['quantity'], product['product_id']) for product i\u2026 [listcomp]",
+            "target": "43:BATCH: cur.executemany(update_product_stock_query, product_id_subtract)"
+        },
+        {
+            "label": "",
+            "source": "43:BATCH: cur.executemany(update_product_stock_query, product_id_subtract)",
+            "target": "44:METHOD: conn.commit()"
+        },
+        {
+            "label": "",
+            "source": "44:METHOD: conn.commit()",
+            "target": "45:RETURN: {'Status': 'Success', 'Message': 'Keranjang Anda Berhasil D\u2026"
+        },
+        {
+            "label": "",
+            "source": "45:RETURN: {'Status': 'Success', 'Message': 'Keranjang Anda Berhasil D\u2026",
+            "target": "48:END: payment_handle()"
+        },
+        {
+            "label": "",
+            "source": "46:EXCEPT Exception as e",
+            "target": "47:RAISE: HTTPException(status_code=500, detail=f'Gagal membayar: {st\u2026"
+        },
+        {
+            "label": "",
+            "source": "47:RAISE: HTTPException(status_code=500, detail=f'Gagal membayar: {st\u2026",
+            "target": "48:END: payment_handle()"
+        }
+    ]
+}

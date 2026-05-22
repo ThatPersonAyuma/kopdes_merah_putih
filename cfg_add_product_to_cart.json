@@ -1,0 +1,240 @@
+{
+    "directed": true,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "label": "START: add_product_to_cart()",
+            "id": "1:START: add_product_to_cart()"
+        },
+        {
+            "label": "ASSIGN: query = INSERT INTO carts (user_id, product_id, quantity) VALUES (%\u2026",
+            "id": "2:ASSIGN: query = INSERT INTO carts (user_id, product_id, quantity) VALUES (%\u2026"
+        },
+        {
+            "label": "ASSIGN: select_query = SELECT id, quantity FROM carts where user_id=%s AND product\u2026",
+            "id": "3:ASSIGN: select_query = SELECT id, quantity FROM carts where user_id=%s AND product\u2026"
+        },
+        {
+            "label": "ASSIGN: select_product_query = SELECT available_amount FROM products WHERE id = %s;",
+            "id": "4:ASSIGN: select_product_query = SELECT available_amount FROM products WHERE id = %s;"
+        },
+        {
+            "label": "ASSIGN: update_query = UPDATE carts SET quantity = quantity+%s WHERE id = %s;",
+            "id": "5:ASSIGN: update_query = UPDATE carts SET quantity = quantity+%s WHERE id = %s;"
+        },
+        {
+            "label": "TRY",
+            "id": "6:TRY"
+        },
+        {
+            "label": "WITH: conn.cursor() as cur",
+            "id": "7:WITH: conn.cursor() as cur"
+        },
+        {
+            "label": "METHOD: cur.execute(select_query, (datas.userId, datas.productId))",
+            "id": "8:METHOD: cur.execute(select_query, (datas.userId, datas.productId))"
+        },
+        {
+            "label": "ASSIGN: res = cur.fetchone() [calls cur.fetchone()]",
+            "id": "9:ASSIGN: res = cur.fetchone() [calls cur.fetchone()]"
+        },
+        {
+            "label": "METHOD: cur.execute(select_product_query, (datas.productId,))",
+            "id": "10:METHOD: cur.execute(select_product_query, (datas.productId,))"
+        },
+        {
+            "label": "ASSIGN: product = cur.fetchone() [calls cur.fetchone()]",
+            "id": "11:ASSIGN: product = cur.fetchone() [calls cur.fetchone()]"
+        },
+        {
+            "label": "IF: res == None",
+            "id": "12:IF: res == None"
+        },
+        {
+            "label": "IF: product['available_amount'] < datas.quantity",
+            "id": "13:IF: product['available_amount'] < datas.quantity"
+        },
+        {
+            "label": "RETURN: {'Status': 'Failed', 'Message': 'Gagal Menambahkan Produk, \u2026",
+            "id": "14:RETURN: {'Status': 'Failed', 'Message': 'Gagal Menambahkan Produk, \u2026"
+        },
+        {
+            "label": "METHOD: cur.execute(query, (datas.userId, datas.productId, datas.quantity))",
+            "id": "15:METHOD: cur.execute(query, (datas.userId, datas.productId, datas.quantity))"
+        },
+        {
+            "label": "IF: product['available_amount'] < res['quantity'] + datas.quant\u2026",
+            "id": "16:IF: product['available_amount'] < res['quantity'] + datas.quant\u2026"
+        },
+        {
+            "label": "RETURN: {'Status': 'Failed', 'Message': 'Gagal Menambahkan Produk, \u2026",
+            "id": "17:RETURN: {'Status': 'Failed', 'Message': 'Gagal Menambahkan Produk, \u2026"
+        },
+        {
+            "label": "METHOD: cur.execute(update_query, (datas.quantity, res['id']))",
+            "id": "18:METHOD: cur.execute(update_query, (datas.quantity, res['id']))"
+        },
+        {
+            "label": "MERGE",
+            "id": "19:MERGE"
+        },
+        {
+            "label": "METHOD: conn.commit()",
+            "id": "20:METHOD: conn.commit()"
+        },
+        {
+            "label": "RETURN: {'Status': 'Success', 'Message': 'Berhasil Menambahkan Prod\u2026",
+            "id": "21:RETURN: {'Status': 'Success', 'Message': 'Berhasil Menambahkan Prod\u2026"
+        },
+        {
+            "label": "EXCEPT Exception as e",
+            "id": "22:EXCEPT Exception as e"
+        },
+        {
+            "label": "RAISE: HTTPException(status_code=500, detail=f'Gagal menambah prod\u2026",
+            "id": "23:RAISE: HTTPException(status_code=500, detail=f'Gagal menambah prod\u2026"
+        },
+        {
+            "label": "END: add_product_to_cart()",
+            "id": "24:END: add_product_to_cart()"
+        }
+    ],
+    "edges": [
+        {
+            "label": "",
+            "source": "1:START: add_product_to_cart()",
+            "target": "2:ASSIGN: query = INSERT INTO carts (user_id, product_id, quantity) VALUES (%\u2026"
+        },
+        {
+            "label": "",
+            "source": "2:ASSIGN: query = INSERT INTO carts (user_id, product_id, quantity) VALUES (%\u2026",
+            "target": "3:ASSIGN: select_query = SELECT id, quantity FROM carts where user_id=%s AND product\u2026"
+        },
+        {
+            "label": "",
+            "source": "3:ASSIGN: select_query = SELECT id, quantity FROM carts where user_id=%s AND product\u2026",
+            "target": "4:ASSIGN: select_product_query = SELECT available_amount FROM products WHERE id = %s;"
+        },
+        {
+            "label": "",
+            "source": "4:ASSIGN: select_product_query = SELECT available_amount FROM products WHERE id = %s;",
+            "target": "5:ASSIGN: update_query = UPDATE carts SET quantity = quantity+%s WHERE id = %s;"
+        },
+        {
+            "label": "",
+            "source": "5:ASSIGN: update_query = UPDATE carts SET quantity = quantity+%s WHERE id = %s;",
+            "target": "6:TRY"
+        },
+        {
+            "label": "",
+            "source": "6:TRY",
+            "target": "7:WITH: conn.cursor() as cur"
+        },
+        {
+            "label": "exception",
+            "source": "6:TRY",
+            "target": "22:EXCEPT Exception as e"
+        },
+        {
+            "label": "",
+            "source": "7:WITH: conn.cursor() as cur",
+            "target": "8:METHOD: cur.execute(select_query, (datas.userId, datas.productId))"
+        },
+        {
+            "label": "",
+            "source": "8:METHOD: cur.execute(select_query, (datas.userId, datas.productId))",
+            "target": "9:ASSIGN: res = cur.fetchone() [calls cur.fetchone()]"
+        },
+        {
+            "label": "",
+            "source": "9:ASSIGN: res = cur.fetchone() [calls cur.fetchone()]",
+            "target": "10:METHOD: cur.execute(select_product_query, (datas.productId,))"
+        },
+        {
+            "label": "",
+            "source": "10:METHOD: cur.execute(select_product_query, (datas.productId,))",
+            "target": "11:ASSIGN: product = cur.fetchone() [calls cur.fetchone()]"
+        },
+        {
+            "label": "",
+            "source": "11:ASSIGN: product = cur.fetchone() [calls cur.fetchone()]",
+            "target": "12:IF: res == None"
+        },
+        {
+            "label": "True",
+            "source": "12:IF: res == None",
+            "target": "13:IF: product['available_amount'] < datas.quantity"
+        },
+        {
+            "label": "False",
+            "source": "12:IF: res == None",
+            "target": "16:IF: product['available_amount'] < res['quantity'] + datas.quant\u2026"
+        },
+        {
+            "label": "True",
+            "source": "13:IF: product['available_amount'] < datas.quantity",
+            "target": "14:RETURN: {'Status': 'Failed', 'Message': 'Gagal Menambahkan Produk, \u2026"
+        },
+        {
+            "label": "False",
+            "source": "13:IF: product['available_amount'] < datas.quantity",
+            "target": "15:METHOD: cur.execute(query, (datas.userId, datas.productId, datas.quantity))"
+        },
+        {
+            "label": "",
+            "source": "14:RETURN: {'Status': 'Failed', 'Message': 'Gagal Menambahkan Produk, \u2026",
+            "target": "24:END: add_product_to_cart()"
+        },
+        {
+            "label": "",
+            "source": "15:METHOD: cur.execute(query, (datas.userId, datas.productId, datas.quantity))",
+            "target": "19:MERGE"
+        },
+        {
+            "label": "True",
+            "source": "16:IF: product['available_amount'] < res['quantity'] + datas.quant\u2026",
+            "target": "17:RETURN: {'Status': 'Failed', 'Message': 'Gagal Menambahkan Produk, \u2026"
+        },
+        {
+            "label": "False",
+            "source": "16:IF: product['available_amount'] < res['quantity'] + datas.quant\u2026",
+            "target": "18:METHOD: cur.execute(update_query, (datas.quantity, res['id']))"
+        },
+        {
+            "label": "",
+            "source": "17:RETURN: {'Status': 'Failed', 'Message': 'Gagal Menambahkan Produk, \u2026",
+            "target": "24:END: add_product_to_cart()"
+        },
+        {
+            "label": "",
+            "source": "18:METHOD: cur.execute(update_query, (datas.quantity, res['id']))",
+            "target": "19:MERGE"
+        },
+        {
+            "label": "",
+            "source": "19:MERGE",
+            "target": "20:METHOD: conn.commit()"
+        },
+        {
+            "label": "",
+            "source": "20:METHOD: conn.commit()",
+            "target": "21:RETURN: {'Status': 'Success', 'Message': 'Berhasil Menambahkan Prod\u2026"
+        },
+        {
+            "label": "",
+            "source": "21:RETURN: {'Status': 'Success', 'Message': 'Berhasil Menambahkan Prod\u2026",
+            "target": "24:END: add_product_to_cart()"
+        },
+        {
+            "label": "",
+            "source": "22:EXCEPT Exception as e",
+            "target": "23:RAISE: HTTPException(status_code=500, detail=f'Gagal menambah prod\u2026"
+        },
+        {
+            "label": "",
+            "source": "23:RAISE: HTTPException(status_code=500, detail=f'Gagal menambah prod\u2026",
+            "target": "24:END: add_product_to_cart()"
+        }
+    ]
+}

@@ -1,0 +1,90 @@
+{
+    "directed": true,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "label": "START: get_all_products()",
+            "id": "1:START: get_all_products()"
+        },
+        {
+            "label": "ASSIGN: query = 'SELECT * FROM Products ORDER BY name ASC;'",
+            "id": "2:ASSIGN: query = 'SELECT * FROM Products ORDER BY name ASC;'"
+        },
+        {
+            "label": "TRY",
+            "id": "3:TRY"
+        },
+        {
+            "label": "WITH: conn.cursor() as cur",
+            "id": "4:WITH: conn.cursor() as cur"
+        },
+        {
+            "label": "METHOD: cur.execute(query)",
+            "id": "5:METHOD: cur.execute(query)"
+        },
+        {
+            "label": "RETURN: cur.fetchall()",
+            "id": "6:RETURN: cur.fetchall()"
+        },
+        {
+            "label": "EXCEPT Exception as e",
+            "id": "7:EXCEPT Exception as e"
+        },
+        {
+            "label": "RAISE: HTTPException(status_code=500, detail=f'Gagal mengambil dat\u2026",
+            "id": "8:RAISE: HTTPException(status_code=500, detail=f'Gagal mengambil dat\u2026"
+        },
+        {
+            "label": "END: get_all_products()",
+            "id": "9:END: get_all_products()"
+        }
+    ],
+    "edges": [
+        {
+            "label": "",
+            "source": "1:START: get_all_products()",
+            "target": "2:ASSIGN: query = 'SELECT * FROM Products ORDER BY name ASC;'"
+        },
+        {
+            "label": "",
+            "source": "2:ASSIGN: query = 'SELECT * FROM Products ORDER BY name ASC;'",
+            "target": "3:TRY"
+        },
+        {
+            "label": "",
+            "source": "3:TRY",
+            "target": "4:WITH: conn.cursor() as cur"
+        },
+        {
+            "label": "exception",
+            "source": "3:TRY",
+            "target": "7:EXCEPT Exception as e"
+        },
+        {
+            "label": "",
+            "source": "4:WITH: conn.cursor() as cur",
+            "target": "5:METHOD: cur.execute(query)"
+        },
+        {
+            "label": "",
+            "source": "5:METHOD: cur.execute(query)",
+            "target": "6:RETURN: cur.fetchall()"
+        },
+        {
+            "label": "",
+            "source": "6:RETURN: cur.fetchall()",
+            "target": "9:END: get_all_products()"
+        },
+        {
+            "label": "",
+            "source": "7:EXCEPT Exception as e",
+            "target": "8:RAISE: HTTPException(status_code=500, detail=f'Gagal mengambil dat\u2026"
+        },
+        {
+            "label": "",
+            "source": "8:RAISE: HTTPException(status_code=500, detail=f'Gagal mengambil dat\u2026",
+            "target": "9:END: get_all_products()"
+        }
+    ]
+}

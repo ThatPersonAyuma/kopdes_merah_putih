@@ -1,0 +1,145 @@
+{
+    "directed": true,
+    "multigraph": false,
+    "graph": {},
+    "nodes": [
+        {
+            "label": "START: handle_voucher()",
+            "id": "1:START: handle_voucher()"
+        },
+        {
+            "label": "ASSIGN: cashback = 0",
+            "id": "2:ASSIGN: cashback = 0"
+        },
+        {
+            "label": "MATCH: voucher_type",
+            "id": "3:MATCH: voucher_type"
+        },
+        {
+            "label": "CASE 1: VoucherType.FIXED_MINUS.value",
+            "id": "4:CASE 1: VoucherType.FIXED_MINUS.value"
+        },
+        {
+            "label": "ASSIGN: total_price -= amount",
+            "id": "5:ASSIGN: total_price -= amount"
+        },
+        {
+            "label": "CASE 2: VoucherType.PERCENTAGE_DISCOUNT.value",
+            "id": "6:CASE 2: VoucherType.PERCENTAGE_DISCOUNT.value"
+        },
+        {
+            "label": "ASSIGN: total_price *= 1 - amount / 100",
+            "id": "7:ASSIGN: total_price *= 1 - amount / 100"
+        },
+        {
+            "label": "CASE 3: VoucherType.FIXED_CASHBACK.value",
+            "id": "8:CASE 3: VoucherType.FIXED_CASHBACK.value"
+        },
+        {
+            "label": "ASSIGN: cashback = amount",
+            "id": "9:ASSIGN: cashback = amount"
+        },
+        {
+            "label": "CASE 4: _",
+            "id": "10:CASE 4: _"
+        },
+        {
+            "label": "RAISE: ValueError('Unknown Value in Voucher Type')",
+            "id": "11:RAISE: ValueError('Unknown Value in Voucher Type')"
+        },
+        {
+            "label": "MATCH MERGE",
+            "id": "12:MATCH MERGE"
+        },
+        {
+            "label": "RETURN: (total_price, cashback)",
+            "id": "13:RETURN: (total_price, cashback)"
+        },
+        {
+            "label": "END: handle_voucher()",
+            "id": "14:END: handle_voucher()"
+        }
+    ],
+    "edges": [
+        {
+            "label": "",
+            "source": "1:START: handle_voucher()",
+            "target": "2:ASSIGN: cashback = 0"
+        },
+        {
+            "label": "",
+            "source": "2:ASSIGN: cashback = 0",
+            "target": "3:MATCH: voucher_type"
+        },
+        {
+            "label": "case 1",
+            "source": "3:MATCH: voucher_type",
+            "target": "4:CASE 1: VoucherType.FIXED_MINUS.value"
+        },
+        {
+            "label": "case 2",
+            "source": "3:MATCH: voucher_type",
+            "target": "6:CASE 2: VoucherType.PERCENTAGE_DISCOUNT.value"
+        },
+        {
+            "label": "case 3",
+            "source": "3:MATCH: voucher_type",
+            "target": "8:CASE 3: VoucherType.FIXED_CASHBACK.value"
+        },
+        {
+            "label": "case 4",
+            "source": "3:MATCH: voucher_type",
+            "target": "10:CASE 4: _"
+        },
+        {
+            "label": "",
+            "source": "4:CASE 1: VoucherType.FIXED_MINUS.value",
+            "target": "5:ASSIGN: total_price -= amount"
+        },
+        {
+            "label": "",
+            "source": "5:ASSIGN: total_price -= amount",
+            "target": "12:MATCH MERGE"
+        },
+        {
+            "label": "",
+            "source": "6:CASE 2: VoucherType.PERCENTAGE_DISCOUNT.value",
+            "target": "7:ASSIGN: total_price *= 1 - amount / 100"
+        },
+        {
+            "label": "",
+            "source": "7:ASSIGN: total_price *= 1 - amount / 100",
+            "target": "12:MATCH MERGE"
+        },
+        {
+            "label": "",
+            "source": "8:CASE 3: VoucherType.FIXED_CASHBACK.value",
+            "target": "9:ASSIGN: cashback = amount"
+        },
+        {
+            "label": "",
+            "source": "9:ASSIGN: cashback = amount",
+            "target": "12:MATCH MERGE"
+        },
+        {
+            "label": "",
+            "source": "10:CASE 4: _",
+            "target": "11:RAISE: ValueError('Unknown Value in Voucher Type')"
+        },
+        {
+            "label": "",
+            "source": "11:RAISE: ValueError('Unknown Value in Voucher Type')",
+            "target": "14:END: handle_voucher()"
+        },
+        {
+            "label": "",
+            "source": "12:MATCH MERGE",
+            "target": "13:RETURN: (total_price, cashback)"
+        },
+        {
+            "label": "",
+            "source": "13:RETURN: (total_price, cashback)",
+            "target": "14:END: handle_voucher()"
+        }
+    ]
+}
