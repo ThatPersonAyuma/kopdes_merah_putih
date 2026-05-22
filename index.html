@@ -1,104 +1,179 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Control Flow Graph</title>
-    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            background-color: #222222;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-        h2 {
-            text-align: center;
-            margin-top: 20px;
-        }
-        /* Wadah untuk menampung grafik */
-        #cfg-container {
-            width: 90vw;
-            height: 75vh;
-            border: 1px solid #444444;
-            background-color: #1e1e1e;
-            margin: 20px auto;
-            border-radius: 8px;
-        }
-    </style>
+    <title>Control Flow Graph (CFG) Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen">
 
-    <h2>Control Flow Graph Viewer</h2>
-    <div id="cfg-container"></div>
+    <header class="bg-gradient-to-r py-6 shadow-md text-white bg-slate-800">
+        <div class="container mx-auto px-4 max-w-5xl">
+            <h1 class="text-3xl font-bold tracking-tight">📊 CFG Visualization Dashboard</h1>
+            <p class="text-slate-300 mt-1 text-sm sm:text-base">Daftar lengkap visualisasi Control Flow Graph untuk Analisis Sistem Koperasi Desa Merah Putih</p>
+        </div>
+    </header>
 
-    <script>
-        // 1. Ambil data dari file JSON yang dibuat oleh Python
-        // Ganti 'cfg_data.json' dengan nama file JSON Anda yang sebenarnya (misal: cfg_login.json)
-fetch('http://127.0.0.1:5500/cfg_payment_handle.json')
-    .then(response => response.json())
-    .then(jsonData => {
+    <main class="container mx-auto px-4 py-8 max-w-5xl">
         
-        // Memetakan nodes (Sudah benar karena JSON Anda memakai nama "nodes")
-        const nodes = jsonData.nodes.map(node => {
-            return { 
-                id: node.id, 
-                label: node.id, 
-                shape: 'box',   
-                margin: 10
-            };
-        });
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6 border-b border-gray-100 bg-gray-50/50">
+                <h2 class="text-xl font-semibold text-gray-700">Daftar Modul & Flowchart</h2>
+            </div>
 
-        // PERBAIKAN DI SINI: Ubah 'links' menjadi 'edges'
-        const edges = jsonData.edges.map(edge => {
-            return { 
-                from: edge.source, // Mengambil data 'source' dari JSON Anda
-                to: edge.target,   // Mengambil data 'target' dari JSON Anda
-                arrows: 'to'     
-            };
-        });
+            <div class="divide-y divide-gray-100">
+                
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 mb-2">Proses Inti</span>
+                        <h3 class="font-semibold text-gray-900 text-lg">payment_handle</h3>
+                        <p class="text-sm text-gray-500">Alur transaksi utama: cek saldo, status member, penanganan perulangan keranjang, diskon/cashback, potongan stok, commit database, dan Exception path.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_payment_handle.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
 
-        // Satukan data untuk diserahkan ke Vis.js
-        const data = {
-            nodes: new vis.DataSet(nodes),
-            edges: new vis.DataSet(edges)
-        };
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">add_product_to_cart</h3>
+                        <p class="text-sm text-gray-500">Proses memasukkan barang ke keranjang belanja, penyesuaian kuantitas, dan validasi sisa stok produk.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_add_product_to_cart.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
 
-        // Konfigurasi tampilan grafis (samakan seperti kemarin)
-        const options = {
-            nodes: {
-                color: {
-                    background: '#4A90E2',
-                    border: '#2B6CB0',
-                    highlight: '#63B3ED'
-                },
-                font: { color: '#ffffff', size: 14, face: 'Courier New' }
-            },
-            edges: {
-                color: '#8B949E',
-                width: 2,
-                smooth: {
-                    type: 'cubicBezier',
-                    forceDirection: 'vertical'
-                }
-            },
-            physics: {
-                barnesHut: {
-                    gravitationalConstant: -4000, // Membuat gaya tolak sedikit lebih kuat agar makin renggang
-                    centralGravity: 0.3,
-                    springLength: 120,            
-                    springConstant: 0.04
-                }
-            }
-        };
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">check_voucher</h3>
+                        <p class="text-sm text-gray-500">Pemeriksaan masa berlaku kupon, status kepemilikan, kuota penggunaan, dan kondisi kelayakan klaim.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_check_voucher.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
 
-        // Render grafik ke dalam div HTML
-        const container = document.getElementById('cfg-container');
-        const network = new vis.Network(container, data, options);
-    })
-    .catch(error => {
-        console.error("Gagal memuat data CFG JSON:", error);
-    });
-    </script>
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">handle_voucher</h3>
+                        <p class="text-sm text-gray-500">Sub-proses penghitungan dampak nominal diskon langsung atau pengumpulan nilai cashback dalam transaksi.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_handle_voucher.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">use_voucher</h3>
+                        <p class="text-sm text-gray-500">Logika penerapan perubahan status voucher menjadi hangus/terpakai setelah checkout sukses.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_use_voucher.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">get_cart_summary</h3>
+                        <p class="text-sm text-gray-500">Kalkulasi ringkasan subtotal belanja keseluruhan, jumlah item, beban pajak, dan estimasi biaya sebelum dibayar.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_get_cart_summary.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">get_cart</h3>
+                        <p class="text-sm text-gray-500">Query penarikan daftar produk apa saja yang saat ini masih tersimpan di dalam keranjang belanja aktif pengguna.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_get_cart.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">get_all_vouchers</h3>
+                        <p class="text-sm text-gray-500">Penarikan semua data katalog promo/voucher yang tersedia di dalam database sistem koperasi.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_get_all_vouchers.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">get_all_products</h3>
+                        <p class="text-sm text-gray-500">Query data seluruh daftar produk etalase koperasi beserta harga asli dan sisa kuantitas persediaan.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_get_all_products.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">get_product</h3>
+                        <p class="text-sm text-gray-500">Alur pencarian spesifik detail data satu produk tertentu berdasarkan parameter Product ID.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_get_product.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">get_user</h3>
+                        <p class="text-sm text-gray-500">Alur pengambilan status data profil pengguna seperti info jenis keanggotaan dan sisa saldo tabungan.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_get_user.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">login</h3>
+                        <p class="text-sm text-gray-500">Alur otentikasi akun: pencocokan kredensial, verifikasi password, enkripsi token, dan gerbang izin masuk sistem.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_login.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">get_db</h3>
+                        <p class="text-sm text-gray-500">Manajemen siklus inisialisasi session pooling, pembukaan gerbang konektor database, dan penanganan kegagalan link.</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_get_db.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+                <div class="p-4 sm:p-6 hover:bg-slate-50 transition flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-900 text-lg">read_root</h3>
+                        <p class="text-sm text-gray-500">Endpoint dasar index API untuk melakukan uji ping koneksi awal (Health-Check).</p>
+                    </div>
+                    <div class="flex items-center gap-2 self-start sm:self-center">
+                        <a href="cfg_read_root.html" class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-sm">View HTML</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-6 mt-12">
+        <div class="container mx-auto px-4 max-w-5xl text-center text-sm text-gray-500">
+            &copy; 2026 Testing Koperasi Desa Merah Putih. Dimuat secara aman menggunakan jalur repositori GitHub Pages.
+        </div>
+    </footer>
+
 </body>
 </html>
